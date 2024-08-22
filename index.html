@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css" />
+    <title>YuGiOh - Cards</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="searchbox"></div>
+        <div id="hits"></div>
+        <div id="pagination"></div>
+    </div>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch@0.3.2/dist/instant-meilisearch.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+    <script>
+        const search = instantsearch({
+            indexName: "cards",
+            searchClient: instantMeiliSearch(
+                "http://localhost:7700",
+                {
+                    primaryKey: 'id', // default: undefined  
+                }
+            )
+        });
+
+        search.addWidgets([
+            instantsearch.widgets.searchBox({
+                container: "#searchbox"
+            }),
+            instantsearch.widgets.configure({ hitsPerPage: 20 }),
+            instantsearch.widgets.hits({
+                container: "#hits",
+                templates: {
+                    
+                    item(hit, { html, components }) {
+                        //debugger;
+                        //return "teste"                          
+                        var a = html`                          
+                        <div class="hit-info" style="text-align:center"><strong>${hit.name}</strong></div>                    
+                        <div class="hit-info"><img src="${hit.card_images[0].image_url}"/></div>
+                        <div class="hit-info"><strong>Type:</strong> ${hit.type}</div>  
+                        <div class="hit-info"><strong>Frametype:</strong> ${hit.frameType}</div>  
+                        <div class="hit-info"><strong>Description:</strong> ${hit.desc}</div> 
+                        <div class="hit-info"><strong>Race:</strong> ${hit.race}</div>  
+                        <div class="hit-info"><strong>Archetype:</strong> ${hit.archetype}</div>  
+                     `;
+                     return a;
+                    },
+                }
+            }),
+            instantsearch.widgets.pagination({
+                container: '#pagination',
+            })
+        ])
+        search.start();    
+    </script>
+</body>
+
+</html>
